@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 export default function UserDetail() {
   const [formData, setFormData] = useState({
     address: "",
-    bloodGroup: "",
+    bloodgroup: "",
     allergies: "",
     gender: "",
     dob: "",
@@ -26,7 +26,7 @@ export default function UserDetail() {
     const token = localStorage.getItem("userToken");
     console.log("Submitting form with data:", formData); // Debugging log
     console.log("Using token:", token); // Debugging log
-    const response=axios.post('http://localhost:5500/users/userdetail', formData, {
+    axios.post('http://localhost:5500/users/userdetail', formData, {
       headers: {
         Authorization: `Bearer ${token}`  
       }
@@ -64,8 +64,8 @@ export default function UserDetail() {
               Blood Group
             </label>
             <select
-              value={formData.bloodGroup}
-              onChange={(e) => handleChange("bloodGroup", e.target.value)}
+              value={formData.bloodgroup}
+              onChange={(e) => handleChange("bloodgroup", e.target.value)}
               className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none border-gray-300"
             >
               <option value="">Select Blood Group</option>

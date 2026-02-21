@@ -13,7 +13,7 @@ const userdetail = new mongoose.Schema({
     required: true,
     trim: true
   },
-  bloodGroup: {
+  bloodgroup: {
     type: String,
     required: true
   },

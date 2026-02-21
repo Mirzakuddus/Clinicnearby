@@ -16,7 +16,7 @@ const userprofile = async (req, res) => {
     const newPatient = new Patient({
       userId: req.user._id, // Assuming req.user is set by auth middleware
       address,
-      bloodGroup: bloodgroup,
+      bloodgroup,
       allergies,
       gender,
       dob: parsedDob,
