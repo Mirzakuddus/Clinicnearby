@@ -1,6 +1,7 @@
 "use client";
+import axios from "axios";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function UserDetail() {
   const [formData, setFormData] = useState({
@@ -11,7 +12,7 @@ export default function UserDetail() {
     dob: "",
     emergencyContact: ""
   });
-
+  const navigate=useNavigate();
   const handleChange = (field, value) => {
     setFormData((prev) => ({
       ...prev,
@@ -20,8 +21,22 @@ export default function UserDetail() {
   };
 
   const handleSubmit = (e) => {
+
     e.preventDefault();
-    console.log("Patient Info Submitted:", formData);
+    const token = localStorage.getItem("userToken");
+    console.log("Submitting form with data:", formData); // Debugging log
+    console.log("Using token:", token); // Debugging log
+    const response=axios.post('http://localhost:5500/users/userdetail', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`  
+      }
+    }).then((res)=>{
+      console.log(res.data);
+      navigate('/userprofile');
+    }).catch((err)=>{
+      console.log(err);
+    });
+    
   };
 
   return (
@@ -123,13 +138,13 @@ export default function UserDetail() {
             />
           </div>
 
-          <Link to={"/"}><button
+         <button
             type="submit"
             className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 rounded-xl hover:shadow-lg transition-all duration-300 transform hover:scale-105 font-medium"
           >
             Submit Information
           </button>
-          </Link>
+          
         </form>
       </div>
     </div>

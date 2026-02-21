@@ -97,8 +97,10 @@ function UserLogin() {
           axios.post('http://localhost:5500/doctors/login', {
             email,password
           }).then((res)=>{
+            
             console.log(res.data);
             console.log("clinic login successfully");
+            localStorage.setItem("clinicToken", res.data.token);
             navigate('/doctordashboard');
 
           }).catch((err)=>{
@@ -112,6 +114,7 @@ function UserLogin() {
           }).then((res)=>{
             console.log(res.data);
             console.log("userlogin successfully")
+            localStorage.setItem("userToken", res.data.token);
             navigate('/');
           }).catch((err)=>{
             console.log(err);
@@ -127,6 +130,7 @@ function UserLogin() {
           }).then((res)=>{
             console.log(res.data);
             console.log("clinic registered successfully");
+            localStorage.setItem("clinicToken", res.data.token);
             navigate('/doctordashboard');
           }).catch((err)=>{
             console.log(err);
@@ -145,6 +149,7 @@ function UserLogin() {
           }).then((res)=>{
             console.log(res.data);
             console.log("user registered successfully");
+            localStorage.setItem("userToken", res.data.token);
             navigate('/userdetail');
           }).catch((err)=>{
             console.log(err); 
