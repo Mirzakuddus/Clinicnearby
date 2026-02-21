@@ -1,26 +1,31 @@
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
 
-const userSchema = new mongoose.Schema({
-  firstname: { type: String, required: true },
-  lastname: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-
-  // 👇 New Profile Fields
-  address: { type: String },
+const userdetail = new mongoose.Schema({
+  address: {
+    type: String,
+    required: true,
+    trim: true
+  },
   bloodGroup: {
     type: String,
-    enum: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+    required: true
   },
-  allergies: { type: String },
+  allergies: {
+    type: String
+  },
   gender: {
     type: String,
-    enum: ["Male", "Female", "Other"]
+    enum: ["Male", "Female", "Other"],
+    required: true
   },
-  dateOfBirth: { type: Date },
-  emergencyContact: { type: String }
-});
-const userdetail=mongoose.model('Userdetail',userSchema);
-module.exports=userdetail;
+  dob: {
+    type: Date,
+    required: true
+  },
+  emergencyContact: {
+    type: String,
+    required: true
+  }
+}, { timestamps: true });
+
+module.exports = mongoose.model("Patient", userdetail);

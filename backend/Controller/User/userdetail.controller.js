@@ -1,57 +1,37 @@
-const User = require('../../Models/User/userdetail.model');
+const Patient = require('../../Models/User/userdetail.model');
 
 // Update User Profile
-const updateProfile = async (req, res) => {
+const userprofile = async (req, res) => {
   try {
-    const {
+    const { address, bloodgroup, allergies, gender, dob, emergencyContact } = req.body;
+    console.log("Received user profile data:", req.body); // Debugging log
+    // Basic validation
+    if (!address || !bloodgroup || !gender || !emergencyContact) {
+      return res.status(400).json({ message: "All required fields must be filled" });
+    }
+
+    // Parse dob from DD-MM-YYYY to Date
+    const parsedDob = new Date(dob.split('-').reverse().join('-'));
+
+    const newPatient = new Patient({
       address,
-      bloodGroup,
+      bloodGroup: bloodgroup,
       allergies,
       gender,
-      dateOfBirth,
+      dob: parsedDob,
       emergencyContact
-    } = req.body;
+    });
 
-    const userId = req.user.id;
+    const savedPatient = await newPatient.save();
 
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      {
-        address,
-        bloodGroup,
-        allergies,
-        gender,
-        dateOfBirth,
-        emergencyContact
-      },
-      { new: true }
-    ).select("-password");
-
-    res.status(200).json({
-      message: "Profile updated successfully",
-      user: updatedUser
+    res.status(201).json({
+      message: "Patient information saved successfully",
+      data: savedPatient
     });
 
   } catch (error) {
-    console.error("Profile update error:", error);
-    res.status(500).json({ error: "Internal server error" });
+    res.status(500).json({ message: "Server Error", error: error.message });
   }
 };
 
-// Get User Profile
-const getProfile = async (req, res) => {
-  try {
-    const user = await User.findById(req.user.id).select("-password");
-
-    if (!user) {
-      return res.status(404).json({ error: "User not found" });
-    }
-
-    res.status(200).json(user);
-  } catch (error) {
-    console.error("Get profile error:", error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
-
-module.exports = { updateProfile, getProfile };
+module.exports = { userprofile };
