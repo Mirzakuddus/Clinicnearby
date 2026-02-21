@@ -7,6 +7,9 @@ const register_user= async (req, res) => {
     if(password !== confirmPassword){
         return res.status(400).json({ error: 'Passwords do not match' });
     }
+     const userExists = await usermodel.findOne({ email });
+    if (userExists)
+      return res.status(400).json({ message: "User already exists" });
     try {
         // Create a new user instance
         const User = new usermodel({  firstName,lastName, email,phone, password,confirmPassword});
@@ -14,7 +17,13 @@ const register_user= async (req, res) => {
         await User.save();
         const token = User.generateToken(); // Generate JWT token for the user
         // Respond with success message
-        res.status(201).json({ message: 'User registered successfully',User, token });
+        res.status(201).json({ message: 'User registered successfully', token, User: {
+        id: User._id,
+        firstName: User.firstName,
+        lastName: User.lastName,
+        email: User.email,
+        phone: User.phone,
+      }, });
     } catch (error) {
         console.error('Error registering user:', error);
         res.status(500).json({ error: 'Internal server error' });
@@ -33,13 +42,19 @@ const Login_user = async (req, res) => {
             return res.status(404).json({ error: 'User not found' });
         }
         // Check if the password matches
-        const isMatch =  user.comparePassword(password);
+        const isMatch =await  user.comparePassword(password);
         if (!isMatch) {
             return res.status(401).json({ error: 'Invalid password' });
         }
         const token = user.generateToken(); // Generate JWT token for the user
         // Respond with success message and token
-        res.status(200).json({ message: 'Login successful', user, token });
+        res.status(200).json({ message: 'Login successful', user: {
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phone: user.phone,
+      }, token });
     } 
 
 module.exports = {

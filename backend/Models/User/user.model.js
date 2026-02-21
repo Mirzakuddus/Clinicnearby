@@ -11,7 +11,7 @@ const userSchema=new mongoose.Schema
     phone:{ type:String, required:true},
     password:{ type:String, required:true,minLength:[8, 'Password must be at least 8 characters long']},
     confirmPassword:{ type:String, required:true,minLength:[8, 'Password must be at least 8 characters long']},
-});
+},{ timestamps: true });
 userSchema.pre('save',async function (next) {
     if(this.isModified('password')){
         this.password= await bcrypt.hash(this.password, 10);
@@ -26,6 +26,8 @@ userSchema.methods.generateToken= function () {
     const token=jsonwebtoken.sign({_id:this._id},process.env.JWT_SECRET,{expiresIn:'24h'})
     return token
 }
+
+
 
 userSchema.methods.comparePassword=async function(password){
     const isMatch = await bcrypt.compare(password, this.password);
