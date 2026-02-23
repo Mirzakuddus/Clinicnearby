@@ -10,6 +10,8 @@ import BookingAppointment from './Pages/BookingAppointment';
 import UserDetail from './Pages/UserDetail';
 import DoctorDetail from './Pages/DoctorDetail';
 import ClinicVerify from './Pages/ClinicVerify';
+import ProtectedUserRoute from './Routes/ProtectedUserRoutes';
+import ProtectedDoctorRoute from './Routes/ProtectedDoctorRoute';
 
 function App() {
   return (
@@ -19,12 +21,32 @@ function App() {
     {/* <DoctorDashboard />
     <SearchResult /> */}
       <Routes>
-        <Route path="/" element={<Dashboard/>} />
+        <Route path="/" element={
+          <ProtectedUserRoute>
+          <Dashboard/>
+          </ProtectedUserRoute>} />
+
         <Route path="/userlogin" element={<UserLogin/>} />
-        <Route path='/userprofile' element={<UserProfile />} />
-        <Route path='/doctordashboard' element={<DoctorDashboard />} />
-        <Route path='/searchresult' element={<SearchResult />} />
-        <Route path='/bookingappointment' element={<BookingAppointment />} />
+
+        <Route path='/userprofile' element={
+          <ProtectedUserRoute>
+          <UserProfile />
+          </ProtectedUserRoute>} />
+
+        <Route path='/doctordashboard' element={
+          <ProtectedDoctorRoute>
+          <DoctorDashboard />
+          </ProtectedDoctorRoute>} />
+          
+        <Route path='/searchresult' element={
+          <ProtectedUserRoute>
+          <SearchResult />
+          </ProtectedUserRoute>} />
+
+        <Route path='/bookingappointment' element={
+          <ProtectedUserRoute>
+          <BookingAppointment />
+          </ProtectedUserRoute>} />
         <Route path='/userdetail' element={<UserDetail />} />
         <Route path='/doctordetail' element={<DoctorDetail />} />
         <Route path='/clinicverify' element={<ClinicVerify />} />

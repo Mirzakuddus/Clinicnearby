@@ -1,29 +1,30 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 
 // import { useUpload } from "../utilities/runtime-helpers";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function UserProfile() {
   const [activeTab, setActiveTab] = React.useState("profile");
   const [isEditing, setIsEditing] = React.useState(false);
   const [userInfo, setUserInfo] = React.useState({
-    name: "Sarah Johnson",
-    email: "sarah.johnson@email.com",
-    phone: "+1 (555) 123-4567",
-    dateOfBirth: "1990-05-15",
-    gender: "Female",
-    address: "123 Main Street, Downtown District",
-    emergencyContact: "John Johnson - +1 (555) 987-6543",
-    bloodType: "O+",
-    allergies: "Penicillin, Shellfish",
+    name: "",
+    email: "",
+    phone: "",
+    dateOfBirth: "",
+    gender: "",
+    address: "",
+    emergencyContact: "",
+    bloodType: "",
+    allergies: "",
   });
   const [profileImage, setProfileImage] = React.useState(
     "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop&crop=face"
   );
 //   const [upload, { loading: uploading }] = useUpload();
-
+const navigate=useNavigate()
   const upcomingAppointments = [
     {
       id: 1,
@@ -102,11 +103,81 @@ function UserProfile() {
     }));
   };
 
-  const handleSaveProfile = () => {
-    setIsEditing(false);
-    alert("Profile updated successfully!");
-  };
+  const handleSaveProfile = async () => {
+  try {
+    const token = localStorage.getItem("userToken");
 
+    await axios.put(
+      "http://localhost:5500/users/updateprofile",
+      {
+        address: userInfo.address,
+        bloodgroup: userInfo.bloodType,
+        allergies: userInfo.allergies,
+        gender: userInfo.gender,
+        dob: userInfo.dateOfBirth,
+        emergencyContact: userInfo.emergencyContact,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+
+    alert("Profile updated successfully!");
+    setIsEditing(false);
+
+  } catch (error) {
+    alert(error.response?.data?.message || "Update failed");
+  }
+};
+ useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const token = localStorage.getItem("userToken");
+        if (!token){
+          navigate("/userlogin");
+           return;
+        }
+
+        const userRes = await axios.get(
+          "http://localhost:5500/users/profile",
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        let profileData = null;
+        try {
+          const profileRes = await axios.get(
+            "http://localhost:5500/users/profiledetail",
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          profileData = profileRes.data;
+        } catch {}
+
+        const userData = userRes.data;
+
+        setUserInfo({
+          name: `${userData.firstName} ${userData.lastName}`,
+          email: userData.email,
+          phone: userData.phone,
+          dateOfBirth: profileData?.dob
+            ? profileData.dob.split("T")[0]
+            : "",
+          gender: profileData?.gender || "",
+          address: profileData?.address || "",
+          emergencyContact: profileData?.emergencyContact || "",
+          bloodType: profileData?.bloodgroup || "",
+          allergies: profileData?.allergies || "",
+        });
+      } catch (error) {
+        console.error("Error fetching profile:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
+  }, [navigate]);
   const handleImageUpload = async (file) => {
     const { url, error } = await upload({ file });
     if (error) {

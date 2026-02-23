@@ -100,7 +100,7 @@ function UserLogin() {
             
             console.log(res.data);
             console.log("clinic login successfully");
-            localStorage.setItem("clinicToken", res.data.token);
+            localStorage.setItem("doctorToken", res.data.token);
             navigate('/doctordashboard');
 
           }).catch((err)=>{
@@ -130,7 +130,7 @@ function UserLogin() {
           }).then((res)=>{
             console.log(res.data);
             console.log("clinic registered successfully");
-            localStorage.setItem("clinicToken", res.data.token);
+            localStorage.setItem("doctorToken", res.data.token);
             navigate('/doctordashboard');
           }).catch((err)=>{
             console.log(err);
